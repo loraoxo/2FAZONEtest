@@ -1,172 +1,486 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>2FA Zone - Gerador de Código</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #1E3A8A, #3B82F6);
-      background-size: 200% 200%;
-      animation: gradientBG 15s ease infinite;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin: 0;
-      overflow: hidden;
-    }
-
-    @keyframes gradientBG {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-
-    .card {
-      background: rgba(255, 255, 255, 0.95);
-      border-radius: 1rem;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-      padding: 2rem;
-      width: 100%;
-      max-width: 400px;
-      opacity: 0;
-      transform: translateY(20px);
-      animation: fadeInUp 0.8s ease-out forwards;
-    }
-
-    @keyframes fadeInUp {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .input-field {
-      transition: all 0.3s ease;
-      border: 2px solid #E5E7EB;
-      border-radius: 0.5rem;
-      padding: 0.75rem;
-      width: 100%;
-      outline: none;
-    }
-
-    .input-field:focus {
-      border-color: #3B82F6;
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-    }
-
-    .btn {
-      background: linear-gradient(90deg, #3B82F6, #60A5FA);
-      color: white;
-      padding: 0.75rem 1.5rem;
-      border-radius: 0.5rem;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
-    }
-
-    .btn:active {
-      transform: translateY(0);
-    }
-
-    .loader {
-      display: none;
-      border: 4px solid #E5E7EB;
-      border-top: 4px solid #3B82F6;
-      border-radius: 50%;
-      width: 24px;
-      height: 24px;
-      animation: spin 1s linear infinite;
-      margin: 0 auto;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    .code-display {
-      background: #F3F4F6;
-      border-radius: 0.5rem;
-      padding: 1rem;
-      text-align: center;
-      font-size: 1.5rem;
-      font-weight: 600;
-      color: #1E3A8A;
-      margin-top: 1rem;
-      opacity: 0;
-      transform: scale(0.95);
-      animation: popIn 0.3s ease-out forwards;
-    }
-
-    @keyframes popIn {
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-  </style>
+<!DOCTYPE html><html lang="en"><head>
+    <meta charset="utf-8">
+    <title>2FA Tools</title>
+	<!-- Meta Data -->
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="author" content="Online Tool Site">
+	<meta name="keywords" content="2FA,2fa,2fa online tools, double verification tools, exchange rate conversion, world time, text processing tools, FB account batch detection, facebook batch detection, online tools">
+	<meta name="description" content="All online tools on this site are free to use and are designed to facilitate your business. The main tools are: 2FA verification code acquisition, exchange rate conversion, text processing, world time, etc.">
+	<!-- Favicons -->
+	<link rel="apple-touch-icon" sizes="144x144" href="images/apple-touch-icon-144x144.png">
+	<link rel="apple-touch-icon" sizes="57x57" href="images/apple-touch-icon-57x57.png">
+	<link rel="shortcut icon" href="images/tools.png" type="image/png">
+    <!-- Styles -->
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/otpauth/9.1.4/otpauth.umd.min.js"></script>-->
+	<script src="js/otpauth.umd.min.js"></script>
+	<!--<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>-->
+	<script src="js/qrcode.min.js"></script>
+	<style>
+	    *{
+	        word-break: break-all;
+	    }
+        .pb-sm-2,.py-sm-2 {
+            padding-bottom: 0px!important;
+        }
+	    .title-2fa{
+	        position: relative;
+	        color: #3B4B5E;
+	        font-size: 2rem;
+	        font-family: "Poppins", sans-serif;
+            font-weight: 600;
+	    }
+	    .title-p{
+	        margin-bottom: 0px!important;
+	    }
+	    .input-2fa{
+            background-color: #F7F9FA;
+            border: 0px;
+            border-radius: 0.55rem;
+            box-shadow: none;
+            color: #5E6E80;
+            padding: 0.875rem 1.375rem 0.8125rem;
+            outline: none !important;
+            position: relative;
+            width: 100%;
+            box-shadow: inset 0px 0px 1px 1px rgb(50 174 77);
+            font-size:0.88rem;
+	        font-weight: 600;
+	    }
+	    
+	    .btn-get:hover,.btn-qr:hover{
+	        background: none;
+	        color:#000;
+	        box-shadow: inset 0px 0px 1px 1px rgb(50 174 77);
+	    }
+	    
+	    .input-2fa:focus{
+	        box-shadow: inset 0px 0px 2px 2px rgb(50 174 77);
+	        background: white;
+	    }
+	    
+	    .div-2fa{
+	        margin-bottom:0.65rem;
+	        font-size:0.88rem;
+	    }
+	    .div-2fa>span{
+	        margin-left:0.55rem;
+	        font-weight: 600;
+	    }
+	    .message-class{
+	        font-weight: 300!important;
+	    }
+	    
+	    .btn-get{
+	        background-image: linear-gradient(142.17deg, #009688 6.66%, #00d708de 91.48%);
+	        box-shadow: inset -0.25rem -0.25rem 0.3125rem rgba(0, 0, 0, 0.1), inset 0.25rem 0.25rem 0.3125rem rgba(255, 255, 255, 0.23);
+            border-radius: 0.35rem;
+            border: 0;
+            color: #fff;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            padding: 0.23rem 0.86rem;
+	    }
+	    #message_js,#message{
+	        margin-left: 1rem;
+	    }
+	    .btn-qr{
+	        float: right;
+	        border:0px;
+	        background-image: linear-gradient(142.17deg, #009688 6.66%, #00d708de 91.48%);
+	        box-shadow: inset -0.25rem -0.25rem 0.3125rem rgba(0, 0, 0, 0.1), inset 0.25rem 0.25rem 0.3125rem rgba(255, 255, 255, 0.23);
+	        border-radius: 0.25rem;
+	        color: #fff;
+            cursor: pointer;
+            font-size: 0.88rem;
+            font-weight: 600;
+	    }
+	    .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1; 
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgba(0,0,0,0.4); 
+        }
+        
+        .modal-content {
+            background-color: #fefefe;
+            padding: 30px;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 1px solid #888;
+            max-width: 320px;
+            overflow: hidden;
+            text-align: center;
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        #qrcode {
+            width: 250px;
+            height: 250px;
+            margin: auto;
+            display: block;
+        }
+        .qr-text {
+            text-align: center;
+            font-size: 16px;
+            margin: 20px 0px;
+        }
+        #notification-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+        
+        .notification {
+            background-color: #030303bf;
+            color: #fff;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            opacity: 0;
+            transform: translateX(100%);
+            transition: opacity 0.5s, transform 0.5s;
+        }
+        
+        .notification.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+	</style>
+	
 </head>
 <body>
-  <div class="card">
-    <h1 class="text-2xl font-bold text-center text-gray-800 mb-6">2FA Zone</h1>
-    <p class="text-center text-gray-600 mb-8">Insira sua chave para gerar o código</p>
-    <div class="mb-4">
-      <label for="key" class="block text-sm font-medium text-gray-700 mb-2">Chave 2FA</label>
-      <input type="text" id="key" class="input-field" placeholder="Digite sua chave" required>
+    <div class="container gutter-top 2fatool">
+		    <div class="row sticky-parent">
+			    <!-- Sidebar nav -->
+                <aside class="col-12 col-md-12 col-lg-2">
+				    <div class="sidebar box sticky-column">
+	                    <ul class="nav">
+                            <li class="nav__item"><a class="active" href="https://2fa.zone"><i class="icon-key"></i>2FA Tool</a></li>
+                        </ul>
+					</div>
+		        </aside>
+		        
+				<!-- Content -->
+		        <div class="col-12 col-md-12 col-lg-10">
+				    <div class="box box-content">
+						<div class="pb-0 pb-sm-2">
+		                    <h1 class="title-2fa">Get 2FA Verification Code</h1>
+						    <p class="title-p">2FA verification code/two-step verification code acquisition tool (equivalent to the web version of Google Authenticator), you can choose one of the methods to enter the key to obtain it.</p>
+					    </div>
+					    <hr>
+					    <div class="class-2fa">
+					        <div class="div-2fa"><input id="secret-input-js" class="input-2fa" type="text" placeholder="Click here to enter the 2FA key" autocomplete="on"></div>
+                            <div class="div-2fa"><button id="btn-js" class="btn-get">Click for authentication code</button><span class="message-class">Use JS to get</span></div>
+                            <div class="div-2fa" id="key-output-js">2FA Key: <span id="key_js"></span></div>
+                            <div class="div-2fa" id="code-output-js">Now Code: <span id="code_js"></span></div>
+                            <div class="div-2fa">Remaining time: <span id="timer_js">30</span> Second <button class="btn-qr" onclick="showModalJS()">Generate QR code</button></div>
+					    </div>
+					    <hr>
+					    <div class="class-2fa">
+					        <div class="div-2fa"><input id="secret-input" class="input-2fa" type="text" placeholder="Click here to enter the 2FA key" autocomplete="on"></div>
+                            <div class="div-2fa"><button id="btn-php" class="btn-get">Click for authentication code</button><span class="message-class">Use PHP to get</span></div>
+                            <div class="div-2fa" id="key-output">2FA Key: <span id="key"></span></div>
+                            <div class="div-2fa" id="code-output">Now Code: <span id="code"></span></div>
+                            <div class="div-2fa">Remaining time: <span id="timer">30</span> 秒<button class="btn-qr" onclick="showModal()">Generate QR code</button></div>
+					    </div>
+						<hr>
+						<h3 class="title title--h5">2FA Tool Description</h3>
+						<p><strong>2FA Key for demo</strong>: <span id="testKey">7J64V3P3E77J3LKNUGSZ5QANTLRLTKVL</span>[Click on 2FA key to copy]<br><strong>Tips for newbies</strong>: You must enter the verification code to log in or verify before the countdown ends, otherwise it will fail and display an error. When testing the function, you must enter a specific coded key to obtain it correctly. Do not enter a key to test and obtain the function. At present, after clicking the button to get the verification code, the verification code will be automatically copied to the clipboard, and you can paste it directly. If you want to verify that the generated verification code is correct, click the button to generate a QR code, and use the Google Authenticator APP to scan and add a check。<br><strong>More ways</strong>: You can also append the key to the URL. [https://2fa.zone/2fa/]
+					,Demo: <a href="https://2fa.zone/2fa/7J64V3P3E77J3LKNUGSZ5QANTLRLTKVL" target="_blank">https://2fa.zone/2fa/7J64V3P3E77J3LKNUGSZ5QANTLRLTKVL</a>, so that the access can also query the verification code. This format is most suitable for beginners.
+						<br><strong>Recent maintenance</strong>: August 23, 2023</p>
+		        </div>
+			    <!-- Footer -->
+				<footer class="footer">©2023 Online Tools</footer>
+			</div>
+		</div>
+	</div>	
+    <div id="notification-container"></div>
+    <div id="myModal" class="modal">
+      <div class="modal-content">
+        <span class="close">�</span>
+        <div id="qrcode"></div>
+        <p class="qr-text">You can use Google Authenticator to scan the QR code above to add the 2FA key to your phone.</p>
+      </div>
     </div>
-    <button onclick="generateCode()" class="btn w-full flex justify-center items-center">Gerar Código</button>
-    <div class="loader mt-4" id="loader"></div>
-    <div id="codeOutput" class="code-display hidden"></div>
-  </div>
-
-  <script>
-    async function generateCode() {
-      const keyInput = document.getElementById('key');
-      const loader = document.getElementById('loader');
-      const codeOutput = document.getElementById('codeOutput');
-      const button = document.querySelector('button');
-
-      if (!keyInput.value) {
-        alert('Por favor, insira uma chave válida.');
-        return;
-      }
-
-      button.disabled = true;
-      button.textContent = 'Gerando...';
-      loader.style.display = 'block';
-      codeOutput.classList.add('hidden');
-
-      try {
-        const response = await fetch('http://localhost:3000/generate', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ secret: keyInput.value.trim() })
+	
+    <div class="back-to-top"></div>
+	
+	<!-- JavaScripts -->
+	<script src="js/jquery-3.4.1.min.js"></script>
+	<script src="js/plugins.min.js"></script>
+    <script src="js/common.js"></script>
+    <script>
+        let key08,key09,key08val,key09val;
+        let localkey=window.localStorage;
+        let refreshCount = 0;
+        const MAX_REFRESH_COUNT = 3;
+        
+        $(document).ready(function() {
+            startTimer();
+            $("#secret-input-js").val(localkey.getItem("key08"));
+            $("#secret-input").val(localkey.getItem("key09"));
         });
-
-        const data = await response.json();
-        if (response.ok) {
-          codeOutput.textContent = data.code;
-          codeOutput.classList.remove('hidden');
-          keyInput.value = '';
-        } else {
-          alert(data.error || 'Erro ao gerar o código.');
+        
+        $(".input-2fa").on("click",function(){
+            this.select();
+            $(this).css("color","red");
+            let textlen = $(this).val();
+            if(textlen != ""){
+                showNotification("All data selected.");
+            }
+        });
+        
+        $("#btn-js").on("click",function(){
+            let secret = $('#secret-input-js').val();
+            secret = filterAndValidateSecret(secret);
+            if(!secret) return;
+            getCodeJS();
+            copyToClipboard("code_js");
+            refreshCount = 0;
+        });
+        
+        $("#btn-php").on("click",function(){
+            getCode(function(newCode) {
+                $("#code").text(newCode);
+                copyToClipboard("code");
+            });
+            refreshCount = 0;
+        });
+        
+        $("#testKey").on("click",function(){
+            copyToClipboard("testKey");
+        });
+        
+        function filterAndValidateSecret(rawSecret) {
+            if(rawSecret == "" || rawSecret == null){
+                return null;
+            }
+            let secret = rawSecret.replace(/\s+/g, '');
+            let pattern = /^[A-Z2-7]+$/;
+            secret = secret.toUpperCase();
+            if (secret.length < 16) {
+                showNotification("The key is too short, please re-enter.");
+                return null;
+            }
+            if (secret.length > 64) {
+                showNotification("The key is too long, please re-enter.");
+                return null;
+            }
+            if(!pattern.test(secret)){
+                showNotification("Incorrectly encoded key, please re-enter.");
+                return null;
+            }
+            return secret;
         }
-      } catch (error) {
-        alert('Erro de conexão com o servidor.');
-      } finally {
-        button.disabled = false;
-        button.textContent = 'Gerar Código';
-        loader.style.display = 'none';
-      }
-    }
-  </script>
-</body>
-</html>
+        
+        function getCodeJS() {
+            let secret = $('#secret-input-js').val();
+            secret = filterAndValidateSecret(secret);
+            if (!secret) return;
+            const totp = new OTPAuth.TOTP({
+                algorithm: 'SHA1',
+                digits: 6,
+                period: 30,
+                secret: OTPAuth.Secret.fromBase32(secret)
+            });
+        
+            const code = totp.generate();
+            
+            $("#key_js").text(secret);
+            $("#code_js").text(code);
+            $("#code_js").css("color","rgb(50 174 77)");
+            localStorage.setItem("key08",secret);
+            showNotification("Fetched successfully.");
+        }
+        
+        function getCode(callback) {
+            const secret = $("#secret-input").val();
+            if(secret==""||secret==null){
+                return;
+            }else{
+                $.get('/app/2fa.php', { secret: secret }, function(data) {
+                    if (data.success) {
+                        $("#key").text(data.key);
+                        $("#code").text(data.newCode);
+                        $("#code").css("color","rgb(50 174 77)");
+                        localStorage.setItem("key09",data.key);
+                        showNotification("Fetched successfully.");
+                        if (typeof callback === "function") {
+                            callback(data.newCode);
+                        }
+                    } else {
+                        showNotification(data.message);
+                    }
+                }, 'json');
+            }
+        }
+        
+        function startTimer() {
+            let currentSecond = new Date().getSeconds();
+            let secondsLeft = 30 - (currentSecond % 30);
+            updateTimerDisplay(secondsLeft);
+            setInterval(() => {
+                secondsLeft--;
+                updateTimerDisplay(secondsLeft);
+                if (secondsLeft == 0) {
+                    secondsLeft = 30; 
+                    let inputJsVal = $("#secret-input-js").val();
+                    let inputPhpVal = $("#secret-input").val();
+                    let secret1 = filterAndValidateSecret(inputJsVal);
+                    let secret2 = filterAndValidateSecret(inputPhpVal);
+                    if (refreshCount < MAX_REFRESH_COUNT) {
+                        if (secret1) {
+                            getCodeJS();
+                        } else {
+                            $("#key_js").text("");
+                            $("#code_js").text("");
+                        }
+        
+                        if (secret2) {
+                            getCode();
+                        } else {
+                            $("#key").text("");
+                            $("#code").text("");
+                        }
+        
+                        if (secret1 || secret2) {
+                            refreshCount++;
+                        }
+                    } else {
+                        if (secret1) {
+                            $("#code_js").text("It has timed out, you need to click the button again to get it!");
+                            $("#code_js").css("color", "red");
+                        }
+        
+                        if (secret2) {
+                            $("#code").text("It has timed out, you need to click the button again to get it!");
+                            $("#code").css("color", "red");
+                        }
+                    }
+                }
+            }, 1000);
+        }
+        
+        function updateTimerDisplay(secondsLeft) {
+            $("#timer").text(secondsLeft);
+            $("#timer_js").text(secondsLeft);
+        }
+        
+        function generateQRCode(secretInput) {
+            let lastSeven = secretInput.slice(-7);
+            const label = 'Handy tool';
+            const issuer = '2fa.run|...'+ lastSeven;
+        
+            const totp = new OTPAuth.TOTP({
+                algorithm: 'SHA1',
+                digits: 6,
+                period: 30,
+                secret: OTPAuth.Secret.fromBase32(secretInput),
+                label: label,
+                issuer: issuer
+            });
+        
+            const uri = totp.toString();
+            const qrContainer = document.getElementById('qrcode');
+            while (qrContainer.firstChild) {
+                qrContainer.removeChild(qrContainer.firstChild);
+            }
+            new QRCode(document.getElementById('qrcode'), {
+                text: uri
+            });
+        }
+        
+        function showModalJS(){
+            let secret = $('#secret-input-js').val();
+            if(secret==""||secret==null){
+                showNotification("2FA key not filled in!");
+                return;
+            }else{
+                 secret = filterAndValidateSecret(secret);
+                 if (!secret) return;
+                 generateQRCode(secret);
+                 const modal = document.getElementById("myModal");
+                 modal.style.display = "block";
+            }
+        }
+        
+        function showModal() {
+            let secret = $('#secret-input').val();
+            if(secret==""||secret==null){
+                showNotification("2FA key not filled in!");
+                return;
+            }else{
+                 secret = filterAndValidateSecret(secret);
+                 if (!secret) return;
+                 generateQRCode(secret);
+                 const modal = document.getElementById("myModal");
+                 modal.style.display = "block";
+            }
+        }
+        
+        document.getElementsByClassName("close")[0].onclick = function() {
+            const modal = document.getElementById("myModal");
+            modal.style.display = "none";
+        }
+        
+        window.onclick = function(event) {
+            const modal = document.getElementById("myModal");
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+        
+        function showNotification(message) {
+            const container = document.getElementById('notification-container');
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            container.appendChild(notification);
+            void notification.offsetWidth;
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+        
+        function copyToClipboard(elementId) {
+            const input = document.createElement('input');
+            input.value = document.getElementById(elementId).textContent;
+            document.body.appendChild(input);
+            input.select();
+            const successful = document.execCommand('copy');
+            document.body.removeChild(input);
+        
+            if (successful) {
+                showNotification("successfully copied.");
+            } else {
+                showNotification("Cannot be copied automatically, please click the button to get it.");
+            }
+        }
+    </script>
+
+</body></html>
