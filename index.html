@@ -128,7 +128,7 @@
   </div>
 
   <script>
-    function generateCode() {
+    async function generateCode() {
       const keyInput = document.getElementById('key');
       const loader = document.getElementById('loader');
       const codeOutput = document.getElementById('codeOutput');
@@ -144,18 +144,28 @@
       loader.style.display = 'block';
       codeOutput.classList.add('hidden');
 
-      // Simula a geração do código
-      setTimeout(() => {
-        // Geração de um código fictício (6 dígitos)
-        const code = Math.floor(100000 + Math.random() * 900000).toString();
-        codeOutput.textContent = code;
-        codeOutput.classList.remove('hidden');
+      try {
+        const response = await fetch('http://localhost:3000/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ secret: keyInput.value.trim() })
+        });
 
+        const data = await response.json();
+        if (response.ok) {
+          codeOutput.textContent = data.code;
+          codeOutput.classList.remove('hidden');
+          keyInput.value = '';
+        } else {
+          alert(data.error || 'Erro ao gerar o código.');
+        }
+      } catch (error) {
+        alert('Erro de conexão com o servidor.');
+      } finally {
         button.disabled = false;
         button.textContent = 'Gerar Código';
         loader.style.display = 'none';
-        keyInput.value = '';
-      }, 1500);
+      }
     }
   </script>
 </body>
